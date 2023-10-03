@@ -220,3 +220,16 @@ int main() {
     
     return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+Enter the postfix expression (use spaces to separate numbers and operators): 12 34 + 5 *
