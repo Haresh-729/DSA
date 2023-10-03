@@ -231,5 +231,73 @@ int main() {
 
 
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
 
-Enter the postfix expression (use spaces to separate numbers and operators): 12 34 + 5 *
+#define Max 50
+#define SIZE 50 /* Size of Stack */
+
+int s[SIZE];
+int top = -1; /* Global declarations */
+
+void push_p(int elem) { /* Function for PUSH operation */
+    s[++top] = elem;
+}
+
+int pop_p() { /* Function for POP operation */
+    return s[top--];
+}
+
+int isOperator(char ch) {
+    return (ch == '+' || ch == '-' || ch == '*' || ch == '/');
+}
+
+int postfix_evaluate(char pofx[Max]) { /* Function to evaluate postfix expression */
+    char* token = strtok(pofx, " ");
+    while (token != NULL) {
+        if (isdigit(token[0])) {
+            int operand = atoi(token);
+            push_p(operand);
+        } else if (isOperator(token[0])) {
+            int op2 = pop_p();
+            int op1 = pop_p();
+            switch (token[0]) {
+                case '+':
+                    push_p(op1 + op2);
+                    break;
+                case '-':
+                    push_p(op1 - op2);
+                    break;
+                case '*':
+                    push_p(op1 * op2);
+                    break;
+                case '/':
+                    if (op2 != 0) {
+                        push_p(op1 / op2);
+                    } else {
+                        printf("Error: Division by zero\n");
+                        return 0;
+                    }
+                    break;
+            }
+        }
+        token = strtok(NULL, " ");
+    }
+    return s[top]; /* The final result after evaluation */
+}
+
+int main() {
+    char post[Max];
+    
+    printf("\nEnter the postfix expression (use spaces to separate numbers and operators): ");
+    fflush(stdin);
+    gets(post);
+    
+    int result = postfix_evaluate(post);
+    
+    printf("\nResult after evaluation: %d\n", result);
+    
+    return 0;
+}
