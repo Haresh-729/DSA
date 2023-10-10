@@ -1,1 +1,71 @@
-hello
+#include <stdio.h>
+#include <stdlib.h>
+
+struct node{
+    int data;
+    struct node *next;
+}
+
+struct node *head, *tail = NULL;
+int data=0;
+
+void addNode(int data)
+{
+    struct node *newNode = (struct node*)malloc(sizeof(struct node));
+    newNode -> data = data;
+    newNode -> next = NULL;
+    
+    if(head == NULL)
+    {
+        head = newNode;
+        tail = newNode;
+    }
+    else
+    {
+        tail-> next = newNode;
+        tail = newNode;
+    }
+    
+    int addMore=0;
+    printf("Enter 1 to store more data, 9 for exit: ");
+    scanf("%d", &addMore);
+    if(addMore == 1)
+    {
+        printf("Enter data to store in list: ");
+        scanf("%d", &data);
+        addNode(data);
+    }
+    else if(addMore == 9)
+    {
+        printf("Your list is created.\n Your List is :");
+        display();
+    }
+}
+
+void display()
+{
+    struct node *current = head;
+    if(current == NULL)
+    {
+        printf("***List is empty.***");
+    }
+    else
+    {
+        while(current != NULL)
+        {
+            printf("\n%d", current->data);
+            current = current -> next;
+        }
+    }
+}
+
+int main()
+{
+    int inputData = 0;
+    printf("Enter the first data to be inserted in list: ");
+    scanf("%d",&inputData);
+    addNode(inputData);
+
+    return 0;
+}
+
