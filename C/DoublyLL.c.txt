@@ -1,0 +1,118 @@
+#include <stdio.h>
+#include <stdlib.h>
+struct node
+{
+    int data;
+    struct node *next;
+    struct node *previous;
+};
+
+struct node *head, *tail;
+int data = 0;
+
+struct node createNode()
+{
+    struct node *newNode = (struct node*)malloc(sizeof(struct node));
+    newNode -> data = NULL;
+    newNode -> next = NULL;
+    newNode -> previous = NULL;
+    return 
+}
+void addNode(int data)
+{
+    struct node *newNode = (struct node*)malloc(sizeof(struct node));
+    newNode -> data = data;
+    newNode -> next = NULL;
+    newNode -> previous = NULL;
+    
+    if(head == NULL)
+    {
+        head = newNode;
+        tail = newNode;
+        newNode -> previous = NULL;
+    }
+    else
+    {
+        newNode -> previous = tail;
+        tail -> next = newNode;
+        tail = newNode;
+        newNode -> next = NULL;
+    }
+    
+    int addMore = 0;
+    printf("Enter 1 to add more data : ");
+    scanf("%d", &addMore);
+    if(addMore ==1)
+    {
+        printf("Enter data to insert :");
+        scanf("%d", &data);
+        addNode(data);
+    }
+    else
+    {
+        printf("List created..!");
+        // display();
+    }
+}
+
+void display()
+{
+    if(head == NULL)
+    {
+        printf("List is Empty....!");
+    }
+    else
+    {
+        printf("Your list is..");
+        struct node *current = head;
+        while(current->next != NULL)
+        {
+            printf("\n%d", current -> data);
+            current = current -> next;
+            if(current -> next == NULL)
+            {
+                printf("\n%d", current -> data);
+            }
+        }
+    }
+}
+
+int main()
+{
+    int choice = 0;
+    printf("Select codes for respective operations :\n1. Create List\n2. Add at Beginning\n3. Add at End.\n4. Add after data\n5.Display\n6. Delete first\n7. Delete Last\n8. Delete specific element\n9. Exit");
+    scanf("%d"&choice);
+    switch(choice)
+    {
+        case 1:
+            int inputdata = 0;
+            printf("Enter data for first element : ");
+            scanf("%d", &inputdata);
+            addNode(inputdata);
+            break;
+        case 2:
+            printf("Under development.");
+        case 3:
+            printf("Under development.");
+            break;
+        case 4:
+            printf("Under development.");
+            break;
+        case 5:
+            display();
+            break;
+        case 6:
+            printf("Under development.");
+            break;
+        case 7:
+            printf("Under development.");
+            break;
+        case 8:
+            printf("Under development.");
+            break;
+        case 9:
+            break;
+    }
+    
+    return 0;
+}
