@@ -1,0 +1,91 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Maximum number of vertices in the graph
+#define MAX_VERTICES 100
+
+int queue[MAX_VERTICES];
+int front = -1, rear = -1;
+
+void enqueue(int vertex) {
+    if (rear == MAX_VERTICES - 1) {
+        printf("Queue is full.\n");
+    } else {
+        if (front == -1) {
+            front = 0;
+        }
+        rear++;
+        queue[rear] = vertex;
+    }
+}
+
+int dequeue() {
+    int vertex;
+    if (front == -1) {
+        printf("Queue is empty.\n");
+        return -1;
+    } else {
+        vertex = queue[front];
+        front++;
+        if (front > rear) {
+            front = rear = -1;
+        }
+        return vertex;
+    }
+}
+
+int isQueueEmpty() {
+    return front == -1;
+}
+
+int graph[MAX_VERTICES][MAX_VERTICES];
+int visited[MAX_VERTICES];
+int vertices;
+
+void bfs(int start) {
+    int i, vertex;
+
+    for (i = 0; i < vertices; i++) {
+        visited[i] = 0;
+    }
+
+    enqueue(start);
+    visited[start] = 1;
+
+    while (!isQueueEmpty()) {
+        vertex = dequeue();
+        printf("%d ", vertex);
+
+        for (i = 0; i < vertices; i++) {
+            if (graph[vertex][i] == 1 && !visited[i]) {
+                enqueue(i);
+                visited[i] = 1;
+            }
+        }
+    }
+}
+
+int main() {
+    int i, j;
+    printf("Enter the number of vertices: ");
+    scanf("%d", &vertices);
+
+    printf("Enter the adjacency matrix:\n");
+    for (i = 0; i < vertices; i++) {
+        for (j = 0; j < vertices; j++) {
+            scanf("%d", &graph[i][j]);
+        }
+    }
+
+    int startVertex;
+    printf("Enter the starting vertex: ");
+    scanf("%d", &startVertex);
+
+    printf("Breadth-First Traversal starting from vertex %d: ", startVertex);
+    bfs(startVertex);
+
+    printf("\n");
+
+    return 0;
+}
+
