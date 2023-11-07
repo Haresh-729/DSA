@@ -40,54 +40,24 @@ void inOrderTraversal(struct Node* root) {
     }
 }
 
-int main() {
-    struct Node* root = NULL;
-
-    // Insert values into the BST
-    root = insert(root, 50);
-    root = insert(root, 30);
-    root = insert(root, 20);
-    root = insert(root, 40);
-    root = insert(root, 70);
-    root = insert(root, 60);
-    root = insert(root, 80);
-
-    // Perform in-order traversal
-    printf("In-order Traversal of the BST: ");
-    inOrderTraversal(root);
-    printf("\n");
-
-    return 0;
+// Function to find the node with the smallest value in a subtree
+struct Node* findMinNode(struct Node* node) {
+    struct Node* current = node;
+    while (current && current->left != NULL) {
+        current = current->left;
+    }
+    return current;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-struct Node* deleteNode(struct Node* root, int key) {
+struct Node* deleteNode(struct Node* root, int value) {
     if (root == NULL) {
         return root;
     }
 
-    if (key < root->data) {
-        root->left = deleteNode(root->left, key);
-    } else if (key > root->data) {
-        root->right = deleteNode(root->right, key);
+    if (value < root->data) {
+        root->left = deleteNode(root->left, value);
+    } else if (value > root->data) {
+        root->right = deleteNode(root->right, value);
     } else {
         // Node with only one child or no child
         if (root->left == NULL) {
@@ -109,11 +79,48 @@ struct Node* deleteNode(struct Node* root, int key) {
     return root;
 }
 
-// Function to find the node with the smallest value in a subtree
-struct Node* findMinNode(struct Node* node) {
-    struct Node* current = node;
-    while (current && current->left != NULL) {
-        current = current->left;
+int main() {
+    struct Node* root = NULL;
+    int option = 0;
+    while(option !=9)
+    {
+        printf("Choose the choice: \n1. Create Binary Search Tree\n2. Delete Node\n3. Display\n");
+        scanf("%d", &option);
+        switch(option)
+        {
+            case 1:
+                // Insert values into the BST
+                int range;
+                printf("Enter number of elements you want to insert :");
+                scanf("%d", &range);
+                printf("%d", range);
+                int input[10];
+                for(int i=0; i< range; i++)
+                {
+                    printf("Enter data for %d elemnet ", i+1);
+                    scanf("%d", &input[i]);
+                }
+                
+                for(int i=0; i< range; i++)
+                {
+                    root = insert(root, input[i]);
+                }
+                break;
+            case 2:
+                //Delete Node
+                int data = 0;
+                printf("Enter data to be deleted : ");
+                scanf("%d", &data);
+                root = deleteNode(root, data);
+                break;
+            case 3:
+                //Display\
+                // Perform in-order traversal
+                printf("In-order Traversal of the BST: ");
+                inOrderTraversal(root);
+                printf("\n");
+        };
     }
-    return current;
+
+    return 0;
 }
