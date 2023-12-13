@@ -1,0 +1,133 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define TABLE_SIZE 10
+
+// Structure for a hash table entry
+struct HashEntry {
+    int key;
+    int value;
+    int isOccupied; // Flag to check if the slot is occupied
+};
+
+// Structure for a hash table
+struct HashTable {
+    struct HashEntry table[TABLE_SIZE];
+};
+
+// Function prototypes
+void initializeHashTable(struct HashTable* hashTable);
+int hashFunction(int key);
+void insertKey(struct HashTable* hashTable, int key, int value);
+int searchKey(struct HashTable* hashTable, int key);
+void displayHashTable(struct HashTable* hashTable);
+
+int main() {
+    struct HashTable hashTable;
+    int choice, key, value;
+
+    initializeHashTable(&hashTable);
+
+    do {
+        // Menu
+        printf("\nHashing Menu:\n");
+        printf("1. Insert Key\n");
+        printf("2. Search Key\n");
+        printf("3. Display Hash Table\n");
+        printf("4. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter the key to insert: ");
+                scanf("%d", &key);
+                printf("Enter the value to associate with the key: ");
+                scanf("%d", &value);
+                insertKey(&hashTable, key, value);
+                break;
+
+            case 2:
+                printf("Enter the key to search: ");
+                scanf("%d", &key);
+                int result = searchKey(&hashTable, key);
+                if (result == -1) {
+                    printf("Key not found.\n");
+                } else {
+                    printf("Value associated with the key %d: %d\n", key, result);
+                }
+                break;
+
+            case 3:
+                displayHashTable(&hashTable);
+                break;
+
+            case 4:
+                printf("Exiting program.\n");
+                break;
+
+            default:
+                printf("Invalid choice. Please enter a valid option.\n");
+        }
+    } while (choice != 4);
+
+    return 0;
+}
+
+// Function to initialize the hash table
+void initializeHashTable(struct HashTable* hashTable) {
+    for (int i = 0; i < TABLE_SIZE; ++i) {
+        hashTable->table[i].key = -1;  // -1 indicates an empty slot
+        hashTable->table[i].isOccupied = 0;
+    }
+}
+
+// Hash function to determine the index for a given key
+int hashFunction(int key) {
+    return key % TABLE_SIZE;
+}
+
+// Function to insert a key-value pair into the hash table
+void insertKey(struct HashTable* hashTable, int key, int value) {
+    int index = hashFunction(key);
+
+    while (hashTable->table[index].isOccupied) {
+        // Linear probing for collision resolution
+        index = (index + 1) % TABLE_SIZE;
+    }
+
+    hashTable->table[index].key = key;
+    hashTable->table[index].value = value;
+    hashTable->table[index].isOccupied = 1;
+
+    printf("Key %d inserted with value %d at index %d.\n", key, value, index);
+}
+
+// Function to search for a key in the hash table
+int searchKey(struct HashTable* hashTable, int key) {
+    int index = hashFunction(key);
+
+    while (hashTable->table[index].isOccupied) {
+        if (hashTable->table[index].key == key) {
+            return hashTable->table[index].value;
+        }
+
+        // Linear probing for collision resolution
+        index = (index + 1) % TABLE_SIZE;
+    }
+
+    return -1; // Key not found
+}
+
+// Function to display the contents of the hash table
+void displayHashTable(struct HashTable* hashTable) {
+    printf("Hash Table:\n");
+
+    for (int i = 0; i < TABLE_SIZE; ++i) {
+        if (hashTable->table[i].isOccupied) {
+            printf("Index %d: Key %d, Value %d\n", i, hashTable->table[i].key, hashTable->table[i].value);
+        } else {
+            printf("Index %d: Empty\n", i);
+        }
+    }
+}

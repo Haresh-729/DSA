@@ -1,0 +1,301 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct node
+{
+    int data;
+    struct node *next;
+};
+
+struct node *head, *tail = NULL;
+void addNode(int input_data)
+{
+    struct node *new_node = (struct node*)malloc(sizeof(struct node));
+    new_node -> data = input_data;
+    new_node -> next = NULL;
+    if(head == NULL)
+    {
+        head = new_node;
+        tail = new_node;
+    }
+    else
+    {
+        tail -> next = new_node;
+        tail = new_node;
+    }
+    
+    int addmore =0;
+    printf("\nEnter 9 to add data to list : ");
+    scanf("%d", &addmore);
+    if(addmore == 9)
+    {
+        int newdata = 0;
+        printf("Enter data to store : ");
+        scanf("%d", &newdata);
+        addNode(newdata);
+    }
+    else
+    {
+        printf("\nYour linked list is created...!\n");
+        // display();
+    }
+}
+
+void display()
+{
+    printf("inside display function");
+    if(head == NULL)
+    {
+        printf("Link list is empty.\n");
+    }
+    else
+    {
+        struct node *PTRr = head;
+        while(PTRr -> next != NULL)
+        {
+            printf("\n");
+            printf("%d ",PTRr->data);
+            PTRr = PTRr -> next;
+        }
+        if(PTRr -> next == NULL)
+        {
+            printf("\n");
+            printf("%d ",PTRr->data);
+        }
+    }
+}
+
+void insertBeginning(int insertData)
+{
+    struct node *newNode = (struct node*)malloc(sizeof(struct node));
+    newNode -> data = insertData;
+    newNode -> next = NULL;
+    if(head == NULL)
+    {
+        printf("Link list is empty. Please create linked list first.");
+    }
+    else
+    {
+        newNode -> next = head;
+        head = newNode;
+        printf("Node inserted successfully at beginning.\n");
+    }
+}
+
+void insertEnd(int insertData)
+{
+    struct node *newNode = (struct node*)malloc(sizeof(struct node));
+    newNode -> data = insertData;
+    newNode -> next = NULL;
+    if(head == NULL)
+    {
+        head = newNode;
+        tail = newNode;
+        printf("Node inserted successfully at the end.");
+    }
+    else
+    {
+        struct node *PTR = head;
+        while(PTR -> next != NULL)
+        {
+            PTR = PTR -> next;
+        }
+        if(PTR-> next == NULL)
+        {
+            PTR -> next = newNode;
+            tail = newNode;
+        }
+        printf("Node inserted successfully at the end.");
+    }
+}
+
+void insertBefore(int insertData, int val)
+{
+    struct node *PTR = head;
+    struct node *PREV = head;
+    struct node *newNode = (struct node*)malloc(sizeof(struct node));
+    newNode -> data = insertData;
+    newNode -> next = NULL;
+    if(head == NULL)
+    {
+        printf("The list is empty. First create Linked List.");
+    }
+    else
+    {
+        while(PTR -> data != val && PTR -> next != NULL)
+        {
+            PREV = PTR;
+            PTR = PTR -> next;
+        }
+        PREV -> next = newNode;
+        newNode -> next = PTR;
+        printf("Node inserted successfully before %d", val);
+    }
+}
+
+void insertAfter(int insertData, int val)
+{
+    struct node *PTR = head;
+    struct node *PREV = head;
+    struct node *newNode = (struct node*)malloc(sizeof(struct node));
+    newNode -> data = insertData;
+    newNode -> next = NULL;
+    if(head == NULL)
+    {
+        printf("The list is empty. First create Linked List.");
+    }
+    else
+    {
+        while(PREV -> data != val && PTR -> next != NULL)
+        {
+            PREV = PTR;
+            PTR = PTR -> next;
+        }
+        PREV -> next = newNode;
+        newNode -> next = PTR;
+        printf("Node inserted successfully after %d", val);
+    }
+}
+
+void deleteFirst()
+{
+    if(head == NULL)
+    {
+        printf("Linked list is already empty...!");
+    }
+    else
+    {
+        struct node *PTR;
+        PTR = head;
+        head = PTR -> next;
+        free(PTR);
+        printf("\n\tFirst Element Deleted Successfully....!");
+    }
+}
+
+void deleteLast()
+{
+    struct node *PTR = head;
+    struct node *PREV = head;
+    if(head == NULL)
+    {
+        printf("Linked list is already empty...!");
+    }
+    else
+    {
+        while(PTR -> next !=NULL)
+        {
+            PREV = PTR;
+            PTR = PTR -> next;
+        }
+        PREV -> next = NULL;
+        free(PTR);
+        printf("\n\tLast Element Deleted Successfully....!");
+    }
+}
+
+void deleteAfter(int val)
+{
+    if(head == NULL)
+    {
+        printf("Linked list is already empty...!");
+    }
+    else
+    {
+        struct node *PTR = head;
+        struct node *PREV = head;
+        while(PREV -> data != val && PTR -> next !=NULL)
+        {
+            PREV = PTR;
+            PTR = PTR -> next;
+        }
+        PREV -> next = PTR -> next;
+        free(PTR);
+        printf("\n\tElement After %d Deleted Successfully....!", val);
+    }
+}
+
+int main()
+{
+    int option = 0;
+    int datainsert = 0;
+    int value = 0;
+    while(option != 5)
+    {
+        printf("\nSelect options...\n1.Create Linked List\n2.Add node\n3.Display\n4.Delete\n5.Exit\n");
+        scanf("\n%d", &option);
+        switch(option)
+        {
+            case 1:
+                printf("\nEnter data to insert in list.");
+                scanf("%d",&datainsert);
+                addNode(datainsert);
+                break;
+            case 2:
+                int insertOpt = 0;
+                while(insertOpt !=5)
+                {
+                    printf("\n\tSelect options to insert at..\n\t1.Beginning\n\t2.End\n\t3.After data.\n\t4.Before data\n\t5.Return to main menu\n\t");
+                    scanf("%d",&insertOpt);
+                    switch(insertOpt)
+                    {
+                        case 1:
+                            printf("\nInsert at beginning : ");
+                            printf("\nEnter data to be inserted.");
+                            scanf("%d", &datainsert);
+                            insertBeginning(datainsert);
+                            break;
+                        case 2 :
+                            printf("\nInsert at end :");
+                            printf("\nEnter data to be inserted.");
+                            scanf("%d", &datainsert);
+                            insertEnd(datainsert);
+                            break;
+                        case 3:
+                            printf("\nInsert after specific data.\nAfter which element you want to insert data ?");
+                            scanf("%d", &value);
+                            printf("\nEnter data to be inserted.");
+                            scanf("%d", &datainsert);
+                            insertAfter(datainsert, value);
+                            break;
+                        case 4 :
+                            printf("\nInsert before specific data.\nBefore which element you want to insert data ?");
+                            scanf("%d", &value);
+                            printf("\nEnter data to be inserted.");
+                            scanf("%d", &datainsert);
+                            insertBefore(datainsert, value);
+                            break;
+                        case 5 :
+                            printf("************Exiting***************");
+                            break;
+                    }
+                }
+                break;
+            case 3 :
+                display();
+                break;
+            case 4 :
+                int delOption = 0;
+                printf("\n\tSELECT ONE OF THE BELOW OPTION\n\t1.Delete First Element\n\t2.Delete Last Element\n\t3.Delete Element After\n\t");
+                scanf("%d", &delOption);
+                switch(delOption)
+                {
+                    case 1:
+                        deleteFirst();
+                        break;
+                    case 2:
+                        deleteLast();
+                        break;
+                    case 3 :
+                        printf("\n\tElement after which you want to delete: ");
+                        scanf("%d", &datainsert);
+                        deleteAfter(datainsert);
+                        break;
+                }
+        };
+    }
+    return 0;
+}
+
+
+

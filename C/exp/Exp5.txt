@@ -1,0 +1,169 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+// Structure for the stack
+struct Stack {
+    int top;
+    unsigned capacity;
+    int* array;
+};
+
+// Function to create a stack with a given capacity
+struct Stack* createStack(unsigned capacity) {
+    struct Stack* stack = (struct Stack*)malloc(sizeof(struct Stack));
+    if (!stack) {
+        printf("Memory allocation failed.\n");
+        exit(EXIT_FAILURE);
+    }
+    stack->top = -1;
+    stack->capacity = capacity;
+    stack->array = (int*)malloc(stack->capacity * sizeof(int));
+    if (!stack->array) {
+        printf("Memory allocation failed.\n");
+        exit(EXIT_FAILURE);
+    }
+    return stack;
+}
+
+// Function to check if a character is an operator
+int isOperator(char ch) {
+    return (ch == '+' || ch == '-' || ch == '*' || ch == '/');
+}
+
+// Function to get the precedence of an operator
+int getPrecedence(char op) {
+    switch (op) {
+        case '+':
+        case '-':
+            return 1;
+        case '*':
+        case '/':
+            return 2;
+        default:
+            return -1;
+    }
+}
+
+// Function to push an element onto the stack
+void push(struct Stack* stack, int value) {
+    if (stack->top == stack->capacity - 1) {
+        printf("Stack Overflow!\n");
+        exit(EXIT_FAILURE);
+    }
+    stack->array[++stack->top] = value;
+}
+
+// Function to pop an element from the stack
+int pop(struct Stack* stack) {
+    if (stack->top == -1) {
+        printf("Stack Underflow!\n");
+        exit(EXIT_FAILURE);
+    }
+    return stack->array[stack->top--];
+}
+
+// Function to peek at the top element of the stack
+int peek(struct Stack* stack) {
+    if (stack->top == -1) {
+        return -1; // Stack is empty
+    }
+    return stack->array[stack->top];
+}
+
+// Function to convert infix expression to postfix expression
+char* infixToPostfix(char* infix) {
+    struct Stack* stack = createStack(strlen(infix));
+    char* postfix = (char*)malloc((strlen(infix) + 1) * sizeof(char));
+    if (!postfix) {
+        printf("Memory allocation failed.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    int i, j;
+    for (i = 0, j = 0; infix[i] != '\0'; i++) {
+        if (isalnum(infix[i])) {
+            postfix[j++] = infix[i];
+        } else if (infix[i] == '(') {
+            push(stack, infix[i]);
+        } else if (infix[i] == ')') {
+            while (peek(stack) != -1 && peek(stack) != '(') {
+                postfix[j++] = pop(stack);
+            }
+            if (peek(stack) == '(') {
+                pop(stack); // Discard the '(' from the stack
+            }
+        } else {
+            while (peek(stack) != -1 && getPrecedence(infix[i]) <= getPrecedence(peek(stack))) {
+                postfix[j++] = pop(stack);
+            }
+            push(stack, infix[i]);
+        }
+    }
+
+    while (peek(stack) != -1) {
+        postfix[j++] = pop(stack);
+    }
+
+    postfix[j] = '\0';
+    free(stack->array);
+    free(stack);
+    return postfix;
+}
+
+// Function to evaluate a postfix expression
+int evaluatePostfix(char* postfix) {
+    struct Stack* stack = createStack(strlen(postfix));
+
+    for (int i = 0; postfix[i] != '\0'; i++) {
+        if (isdigit(postfix[i])) {
+            push(stack, postfix[i] - '0');
+        } else {
+            int operand2 = pop(stack);
+            int operand1 = pop(stack);
+            switch (postfix[i]) {
+                case '+':
+                    push(stack, operand1 + operand2);
+                    break;
+                case '-':
+                    push(stack, operand1 - operand2);
+                    break;
+                case '*':
+                    push(stack, operand1 * operand2);
+                    break;
+                case '/':
+                    push(stack, operand1 / operand2);
+                    break;
+            }
+        }
+    }
+
+    int result = pop(stack);
+    free(stack->array);
+    free(stack);
+    return result;
+}
+
+int main() {
+    char infix[100];
+
+    printf("Enter an infix expression: ");
+    fgets(infix, sizeof(infix), stdin);
+
+    // Remove the newline character from the input
+    infix[strcspn(infix, "\n")] = '\0';
+
+    // Convert infix to postfix
+    char* postfix = infixToPostfix(infix);
+    printf("Postfix expression: %s\n", postfix);
+
+    // Evaluate the postfix expression
+    int result = evaluatePostfix(postfix);
+    printf("Result of evaluation: %d\n", result);
+
+    // Free allocated memory
+    free(postfix);
+
+    return 0;
+}

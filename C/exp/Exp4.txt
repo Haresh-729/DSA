@@ -1,0 +1,231 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Node structure for a stack node
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+// Function to create a new node
+struct Node* createNode(int value) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    if (!newNode) {
+        printf("Memory allocation failed.\n");
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = value;
+    newNode->next = NULL;
+    return newNode;
+}
+
+// Function to push a value onto the stack
+void push(struct Node** top, int value) {
+    struct Node* newNode = createNode(value);
+    newNode->next = *top;
+    *top = newNode;
+    printf("%d pushed to the stack.\n", value);
+}
+
+// Function to pop a value from the stack
+void pop(struct Node** top) {
+    if (*top == NULL) {
+        printf("Stack Underflow! Cannot pop from an empty stack.\n");
+    } else {
+        struct Node* temp = *top;
+        *top = (*top)->next;
+        printf("%d popped from the stack.\n", temp->data);
+        free(temp);
+    }
+}
+
+// Function to display the stack elements
+void display(struct Node* top) {
+    if (top == NULL) {
+        printf("Stack is empty.\n");
+    } else {
+        printf("Stack elements: ");
+        while (top != NULL) {
+            printf("%d ", top->data);
+            top = top->next;
+        }
+        printf("\n");
+    }
+}
+
+// Function to free the memory allocated for the stack
+void freeStack(struct Node* top) {
+    struct Node* temp;
+    while (top != NULL) {
+        temp = top;
+        top = top->next;
+        free(temp);
+    }
+}
+
+int main() {
+    struct Node* top = NULL;
+    int choice, value;
+
+    while (1) {
+        printf("\nStack Menu:\n");
+        printf("1. Push\n");
+        printf("2. Pop\n");
+        printf("3. Display\n");
+        printf("4. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter the value to push: ");
+                scanf("%d", &value);
+                push(&top, value);
+                break;
+
+            case 2:
+                pop(&top);
+                break;
+
+            case 3:
+                display(top);
+                break;
+
+            case 4:
+                printf("Exiting the program.\n");
+                freeStack(top);
+                exit(0);
+
+            default:
+                printf("Invalid choice. Please enter a valid option.\n");
+        }
+    }
+
+    return 0;
+}
+
+////////////////////////////////// QUEUE ////////////////////////////////////////////
+
+#include <stdio.h>
+#include <stdlib.h>
+
+// Node structure for the linked list
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+// Queue structure
+struct Queue {
+    struct Node* front;
+    struct Node* rear;
+};
+
+// Function prototypes
+struct Queue* createQueue();
+void enqueue(struct Queue* queue, int data);
+int dequeue(struct Queue* queue);
+void displayQueue(struct Queue* queue);
+
+int main() {
+    struct Queue* queue = createQueue();
+    int choice, data;
+
+    do {
+        // Menu
+        printf("\nQueue Menu:\n");
+        printf("1. Enqueue\n");
+        printf("2. Dequeue\n");
+        printf("3. Display\n");
+        printf("4. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter the element to enqueue: ");
+                scanf("%d", &data);
+                enqueue(queue, data);
+                break;
+
+            case 2:
+                if (queue->front == NULL) {
+                    printf("Queue is empty. Cannot dequeue.\n");
+                } else {
+                    printf("Dequeued element: %d\n", dequeue(queue));
+                }
+                break;
+
+            case 3:
+                displayQueue(queue);
+                break;
+
+            case 4:
+                printf("Exiting program.\n");
+                break;
+
+            default:
+                printf("Invalid choice. Please enter a valid option.\n");
+        }
+    } while (choice != 4);
+
+    return 0;
+}
+
+// Function to create an empty queue
+struct Queue* createQueue() {
+    struct Queue* queue = (struct Queue*)malloc(sizeof(struct Queue));
+    queue->front = queue->rear = NULL;
+    return queue;
+}
+
+// Function to enqueue an element into the queue
+void enqueue(struct Queue* queue, int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->next = NULL;
+
+    if (queue->rear == NULL) {
+        queue->front = queue->rear = newNode;
+    } else {
+        queue->rear->next = newNode;
+        queue->rear = newNode;
+    }
+
+    printf("%d enqueued to the queue.\n", data);
+}
+
+// Function to dequeue an element from the queue
+int dequeue(struct Queue* queue) {
+    if (queue->front == NULL) {
+        return -1; // Signifies an empty queue
+    }
+
+    struct Node* temp = queue->front;
+    int data = temp->data;
+
+    queue->front = queue->front->next;
+
+    if (queue->front == NULL) {
+        queue->rear = NULL;
+    }
+
+    free(temp);
+    return data;
+}
+
+// Function to display the elements in the queue
+void displayQueue(struct Queue* queue) {
+    if (queue->front == NULL) {
+        printf("Queue is empty.\n");
+        return;
+    }
+
+    printf("Elements in the queue: ");
+    struct Node* current = queue->front;
+    while (current != NULL) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("\n");
+}
