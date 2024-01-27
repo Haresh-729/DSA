@@ -1,0 +1,98 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+void generateRandomArray(int arr[], int size) {
+    for (int i = 0; i < size; i++) {
+        arr[i] = rand();
+    }
+}
+
+void copyArray(int source[], int destination[], int size) {
+    for (int i = 0; i < size; i++) {
+        destination[i] = source[i];
+    }
+}
+
+void insertionSort(int arr[], int size) {
+    for (int i = 1; i < size; i++) {
+        int key = arr[i];
+        int j = i - 1;
+
+        while (j >= 0 && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            j = j - 1;
+        }
+
+        arr[j + 1] = key;
+    }
+}
+
+void selectionSort(int arr[], int size) {
+    for (int i = 0; i < size - 1; i++) {
+        int minIndex = i;
+        for (int j = i + 1; j < size; j++) {
+            if (arr[j] < arr[minIndex]) {
+                minIndex = j;
+            }
+        }
+
+        int temp = arr[i];
+        arr[i] = arr[minIndex];
+        arr[minIndex] = temp;
+    }
+}
+
+double measureTime(void (*sortFunction)(int[], int), int arr[], int size) {
+    struct timespec start, end;
+
+    clock_gettime(CLOCK_MONOTONIC, &start);
+
+    sortFunction(arr, size);
+
+    clock_gettime(CLOCK_MONOTONIC, &end);
+
+    return (end.tv_sec - start.tv_sec) * 1e9 + (end.tv_nsec - start.tv_nsec);
+}
+
+int main() {
+    srand(time(NULL));
+
+    int sizes[] = {10000, 25000, 50000};
+    int numSizes = sizeof(sizes) / sizeof(sizes[0]);
+
+    for (int i = 0; i < numSizes; i++) {
+        int size = sizes[i];
+
+        int *arr = (int *)malloc(size * sizeof(int));
+        generateRandomArray(arr, size);
+
+        int *averageArr = (int *)malloc(size * sizeof(int));
+        int *worstArr = (int *)malloc(size * sizeof(int));
+        copyArray(arr, averageArr, size);
+        copyArray(arr, worstArr, size);
+
+        double insertionBestTime = measureTime(insertionSort, arr, size);
+        double insertionAverageTime = measureTime(insertionSort, averageArr, size);
+        double insertionWorstTime = measureTime(insertionSort, worstArr, size);
+
+        double selectionBestTime = measureTime(selectionSort, arr, size);
+        double selectionAverageTime = measureTime(selectionSort, averageArr, size);
+        double selectionWorstTime = measureTime(selectionSort, worstArr, size);
+
+        printf("Array Size: %d\n", size);
+        printf("Insertion Sort - Best Case: %.0f ns\n", insertionBestTime);
+        printf("Insertion Sort - Average Case: %.0f ns\n", insertionAverageTime);
+        printf("Insertion Sort - Worst Case: %.0f ns\n", insertionWorstTime);
+        printf("Selection Sort - Best Case: %.0f ns\n", selectionBestTime);
+        printf("Selection Sort - Average Case: %.0f ns\n", selectionAverageTime);
+        printf("Selection Sort - Worst Case: %.0f ns\n", selectionWorstTime);
+        printf("\n");
+
+        free(arr);
+        free(averageArr);
+        free(worstArr);
+    }
+
+    return 0;
+}
