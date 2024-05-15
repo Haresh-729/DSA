@@ -1,0 +1,52 @@
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+// Function to print the subsets
+void printSubsets(const vector<int>& subset) {
+    cout << "{ ";
+    for (int i = 0; i < subset.size(); ++i) {
+        cout << subset[i];
+        if (i < subset.size() - 1) {
+            cout << ", ";
+        }
+    }
+    cout << " }" << endl;
+}
+
+// Function to find all subsets that sum up to the target value
+void sumOfSubsets(int target, int index, const vector<int>& input, vector<int>& subset, int currentSum) {
+    // If the current sum is equal to the target value, print the subset
+    if (currentSum == target) {
+        printSubsets(subset);
+        return;
+    }
+
+    // Backtracking
+    for (int i = index; i < input.size(); ++i) {
+        // Add the current element to the subset
+        subset.push_back(input[i]);
+
+        // If adding the current element doesn't exceed the target, continue exploring
+        if (currentSum + input[i] <= target) {
+            sumOfSubsets(target, i + 1, input, subset, currentSum + input[i]);
+        }
+
+        // Remove the last added element (backtrack)
+        subset.pop_back();
+    }
+}
+
+int main() {
+    vector<int> input = {2, 5, 8, 4, 6, 11};
+    int target = 15;
+
+    vector<int> subset;
+    int currentSum = 0;
+
+    cout << "Subsets with sum " << target << ":" << endl;
+    sumOfSubsets(target, 0, input, subset, currentSum);
+
+    return 0;
+}

@@ -1,0 +1,68 @@
+#include <iostream>
+#include <string>
+#include <vector>
+
+using namespace std;
+
+// Function to search for a pattern in a given text using Rabin-Karp algorithm
+vector<int> rabinKarp(const string& text, const string& pattern) {
+    vector<int> result;
+
+    int n = text.size();
+    int m = pattern.size();
+    int prime = 101; // A prime number for hashing
+    int p = 0; // Hash value for pattern
+    int t = 0; // Hash value for current substring of text
+    int h = 1; // Value of prime^(m-1)
+
+    // Calculate the hash value of the pattern and the first window of text
+    for (int i = 0; i < m; ++i) {
+        p = (p * 256 + pattern[i]) % prime;
+        t = (t * 256 + text[i]) % prime;
+        if (i != 0) {
+            h = (h * 256) % prime;
+        }
+    }
+
+    // Slide the pattern over the text one by one
+    for (int i = 0; i <= n - m; ++i) {
+        // Check the hash values of current window of text and pattern
+        if (p == t) {
+            // Check if all characters match
+            bool match = true;
+            for (int j = 0; j < m; ++j) {
+                if (text[i + j] != pattern[j]) {
+                    match = false;
+                    break;
+                }
+            }
+            // If a match is found, add the index to result
+            if (match) {
+                result.push_back(i);
+            }
+        }
+        // Calculate hash value for next window of text: Remove leading digit, add trailing digit
+        if (i < n - m) {
+            t = (256 * (t - text[i] * h) + text[i + m]) % prime;
+            if (t < 0) {
+                t += prime; // Make sure t is positive
+            }
+        }
+    }
+
+    return result;
+}
+
+int main() {
+    string text = "ABAAABCDBBABCDDEBCABC";
+    string pattern = "ABC";
+
+    cout << "Pattern found at indices: ";
+    vector<int> indices = rabinKarp(text, pattern);
+    for (int i : indices) {
+        cout << i << " ";
+    }
+    cout << endl;
+
+    return 0;
+}

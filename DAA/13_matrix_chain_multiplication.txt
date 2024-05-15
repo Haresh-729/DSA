@@ -1,0 +1,46 @@
+#include <iostream>
+#include <vector>
+#include <climits>
+
+using namespace std;
+
+// Function to find the minimum number of scalar multiplications needed to compute the matrix chain product
+int matrixChainOrder(const vector<int>& dims) {
+    int n = dims.size() - 1; // Number of matrices in the chain
+    vector<vector<int>> dp(n, vector<int>(n, 0)); // Initialize a 2D dp table
+
+    // dp[i][j] stores the minimum number of scalar multiplications needed to compute the matrix chain A[i] * A[i+1] * ... * A[j]
+
+    // Chain length is 1, cost is 0
+    for (int i = 0; i < n; ++i) {
+        dp[i][i] = 0;
+    }
+
+    // Chain length l from 2 to n
+    for (int l = 2; l <= n; ++l) {
+        for (int i = 0; i < n - l + 1; ++i) {
+            int j = i + l - 1; // End index of the chain of length l starting at index i
+            dp[i][j] = INT_MAX;
+            for (int k = i; k < j; ++k) {
+                // Calculate the cost of multiplying subchains A[i]...A[k] and A[k+1]...A[j], plus the cost of multiplying the results
+                int cost = dp[i][k] + dp[k + 1][j] + dims[i] * dims[k + 1] * dims[j + 1];
+                dp[i][j] = min(dp[i][j], cost);
+            }
+        }
+    }
+
+    // dp[0][n-1] stores the minimum number of scalar multiplications needed to compute the entire chain
+    return dp[0][n - 1];
+}
+
+int main() {
+    // Example matrix chain dimensions
+    vector<int> dims = {10, 30, 5, 60}; // Matrices dimensions: A1: 10x30, A2: 30x5, A3: 5x60
+
+    // Calculate the minimum number of scalar multiplications needed to compute the matrix chain product
+    int minMultiplications = matrixChainOrder(dims);
+
+    cout << "Minimum number of scalar multiplications needed: " << minMultiplications << endl;
+
+    return 0;
+}

@@ -1,0 +1,51 @@
+#include <iostream>
+#include <limits>
+
+// Function to find minimum and maximum element in an array
+void findMinMax(int arr[], int n, int& min, int& max) {
+    if (n <= 0)
+        return;
+
+    // Initialize min and max
+    min = max = arr[0];
+
+    // Traverse array elements from second and compare every element with current min and max
+    for (int i = 1; i < n; i++) {
+        if (arr[i] < min)
+            min = arr[i];
+        else if (arr[i] > max)
+            max = arr[i];
+    }
+}
+
+int main() {
+    const int maxSize = 100; // Maximum size of the array
+    int arr[maxSize];
+    int n;
+
+    // Get the number of elements in the array from the user
+    std::cout << "Enter the number of elements: ";
+    std::cin >> n;
+
+    // Validate input
+    if (n <= 0 || n > maxSize) {
+        std::cerr << "Invalid input. Please enter a positive number less than or equal to " << maxSize << "." << std::endl;
+        return 1; // Return error code
+    }
+
+    // Get elements of the array from the user
+    std::cout << "Enter the elements of the array: ";
+    for (int i = 0; i < n; ++i) {
+        std::cin >> arr[i];
+    }
+
+    int min, max;
+
+    // Function call to find min and max
+    findMinMax(arr, n, min, max);
+
+    std::cout << "Minimum element is " << min << std::endl;
+    std::cout << "Maximum element is " << max << std::endl;
+
+    return 0;
+}
